@@ -21,8 +21,9 @@ def randname():
 ##### helpers #####
 def create_struct_dtype():
     members = np.random.randint(2, 100)
+    name = randname()
     return np.dtype(
-        [(randname(), randtype()) for _ in range(members)]
+        [(name + str(i), randtype()) for i in range(members)]
     )
 
 def test_scalar_dtypes():
@@ -68,10 +69,11 @@ def test_nested_structured_dtypes_simple():
         [randtype(), randtype()]
     ]
 
+    name = randname()
     nested_struct_dtype_simple = np.dtype([
-        ('struct1', np.dtype([(randname(), dtypes[0][0]), (randname(), dtypes[0][1])])),
-        ('struct2', np.dtype([(randname(), dtypes[1][0]), (randname(), dtypes[1][1])])),
-        ('struct3', np.dtype([(randname(), dtypes[2][0]), (randname(), dtypes[2][1])])),
+        ('struct1', np.dtype([(name + '1', dtypes[0][0]), (name + '2', dtypes[0][1])])),
+        ('struct2', np.dtype([(name + '3', dtypes[1][0]), (name + '4', dtypes[1][1])])),
+        ('struct3', np.dtype([(name + '5', dtypes[2][0]), (name + '6', dtypes[2][1])])),
     ])
 
     val = rand(nested_struct_dtype_simple)
