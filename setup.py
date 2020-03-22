@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='rvg',
     version='0.1',
-    description='the NumPy Random Value Generator',
+    description='random values generator',
     long_descrption=open('README.md', 'r').read(),
     author='Sotiris Niarchos',
     author_email='sot.niarchos@gmail.com',

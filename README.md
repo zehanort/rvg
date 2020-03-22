@@ -1,1 +1,1 @@
-# `nprvg` - NumPy Random Value Generator
+# `rvg` - Random Values Generator
