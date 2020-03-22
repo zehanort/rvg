@@ -27,20 +27,35 @@ class NumPyRVG:
                     stacklevel=2
                 )
 
-    def scalar_or_array(self, rvg, args, dtype, length):
+    def scalar_or_array(self, rvg, limits, dtype, length):
+
+        # fix limits depending on dtype
+        if not hasattr(dtype, 'fields'):
+            if np.issubdtype(dtype, np.floating):
+                actual_dtype_limits = np.finfo(dtype)
+            else:
+                actual_dtype_limits = np.iinfo(dtype)
+            actual_dtype_limits = actual_dtype_limits.min, actual_dtype_limits.max
+            rectified_limits = [
+                max(limits[0], actual_dtype_limits[0]),
+                min(limits[1], actual_dtype_limits[1])
+            ]
+            if rectified_limits != sorted(rectified_limits):
+                raise ValueError(f'unproper limits {limits} for the requested dtype {dtype} with actual limits {actual_dtype_limits}')
+            limits = rectified_limits
 
         # scalar requested
         if not length:
             try:
-                val = rvg(*args)
+                val = rvg(*limits)
                 return dtype(val)
             except TypeError:
                 return val
             except ValueError:
-                raise ValueError(f'Can not generate unsigned value with upper bound equal to {self.b}')
+                raise ValueError(f'unproper limits {limits} for the requested dtype')
 
         # array requested
-        vals = [rvg(*args) for _ in range(length)]
+        vals = [rvg(*limits) for _ in range(length)]
         try:
             return np.array(map(dtype, vals), dtype=dtype)
         except TypeError:

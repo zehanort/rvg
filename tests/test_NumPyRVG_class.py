@@ -30,8 +30,9 @@ def create_struct_dtype():
 def test_scalar_dtypes():
     rand = NumPyRVG(1000)
     for dtype in dtypes:
-        val = rand(dtype)
-        assert type(val) == dtype
+        for _ in range(50):
+            val = rand(dtype)
+            assert type(val) == dtype
 
 def test_array_dtypes():
     rand = NumPyRVG(1000)
@@ -123,8 +124,17 @@ def test_a_b_limits_errors():
     with pytest.warns(Warning, match=f'value {b} for argument `b` will cause a runtime error if generation of values of unsigned type is attempted'):
         rand = NumPyRVG(a, b)
 
-    with pytest.raises(ValueError, match=f'Can not generate unsigned value with upper bound equal to {b}') as e:
+    with pytest.raises(ValueError) as e:
         rand(np.uint32)
+        assert str(e.value).startswith('unproper limits')
+
+def test_a_b_limits_improper_usage():
+
+    a, b = 1, 1000
+    rand = NumPyRVG(a, b)
+
+    vals = rand(np.int8, length=100)
+    assert (vals >= a).all() and (vals <= b).all()
 
 def test_a_b_limits_proper_usage():
 
