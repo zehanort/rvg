@@ -26,6 +26,6 @@ setup(
     ],
 
     install_requires=['numpy'],
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     packages=['rvg']
 )
