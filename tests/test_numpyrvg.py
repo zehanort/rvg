@@ -5,12 +5,19 @@ import os
 import string
 
 dtypes = [
-    np.int8, np.int16, np.int32, np.int64,
-    np.uint8, np.uint16, np.uint32, np.uint64,
-    np.half, np.float32, np.float64, np.double, np.int
+    np.int, np.int8, np.int16, np.int32, np.int64,
+    np.uint, np.uint8, np.uint16, np.uint32, np.uint64,
+    np.half, np.float32, np.float64, np.double
 ]
 
 letters = [c for c in string.ascii_lowercase]
+
+def create_struct_type():
+    members = np.random.randint(2, 100)
+    return np.dtype(
+        [(''.join(np.random.choice(letters) for _ in range(5)), np.random.choice(dtypes)) for _ in range(members)]
+    )
+
 
 def test_scalar_types():
     rand = NumPyRVG(1000)
@@ -32,11 +39,8 @@ def test_array_types():
 def test_structured_types():
     rand = NumPyRVG(1000)
     for _ in range(10):
-        members = np.random.randint(2, 100)
         length = np.random.randint(10, 100)
-        struct_dtype = np.dtype(
-            [(''.join(np.random.choice(letters) for _ in range(5)), np.random.choice(dtypes)) for _ in range(members)]
-        )
+        struct_dtype = create_struct_type()
 
         scl = rand(struct_dtype)
 
@@ -47,6 +51,17 @@ def test_structured_types():
         assert type(arr) == np.ndarray
         assert len(arr) == length
         assert arr.dtype == struct_dtype
+
+def test_nested_structured_types():
+    rand = NumPyRVG(1000)
+    for _ in range(10):
+        members = np.random.randint(2, 100)
+        length = np.random.randint(10, 100)
+        nested_struct_dtype = np.dtype(
+            [(''.join(np.random.choice(letters) for _ in range(5)), create_struct_type()) for _ in range(members)]
+        )
+
+        val = rand(nested_struct_dtype)
 
 def test_negative_limit():
     neglim = np.random.randint(-100, 0)

@@ -5,10 +5,10 @@ setup(
     version='0.1',
     description='random values generator',
     long_description=open('README.md', 'r').read(),
+    long_description_content_type='text/markdown',
     author='Sotiris Niarchos',
     author_email='sot.niarchos@gmail.com',
-    # url='',
-    # download_url='',
+    url='http://pypi.python.org/pypi/rvg',
     license='MIT',
 
     classifiers=[
@@ -25,5 +25,6 @@ setup(
     ],
 
     install_requires=['numpy'],
+    python_requires='>=3.5',
     packages=['rvg']
 )
