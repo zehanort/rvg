@@ -20,18 +20,23 @@ class NumPyRVG:
 
         # scalar requested
         if not length:
+            val = rvg(*args)
             try:
-                return dtype(rvg(*args))
+                return dtype(val)
             except TypeError:
-                return rvg(*args)
+                return val
 
         # array requested
-        return np.array([rvg(*args) for _ in range(length)], dtype=dtype)
+        vals = [rvg(*args) for _ in range(length)]
+        try:
+            return np.array(map(dtype, vals), dtype=dtype)
+        except TypeError:
+            return np.array(vals, dtype=dtype)
 
     def rand_val_for_non_primitive_type(self, dtype):
         retvals = []
         for field_name in dtype.names:
-            field_dtype = dtype[field_name].type
+            field_dtype = dtype[field_name] if hasattr(dtype[field_name], 'names') and dtype[field_name].names else dtype[field_name].type
             retvals.append(self(field_dtype))
         return tuple(retvals)
 
@@ -53,5 +58,8 @@ class NumPyRVG:
         # custom types, treated all the same way (i.e. as tuples)
         if hasattr(dtype, 'fields'):
             return self.scalar_or_array(self.rand_val_for_non_primitive_type, (dtype,), dtype, length)
+
+        if dtype == np.void:
+            raise TypeError('HOLY SHIT')
 
         raise NotImplementedError('dtype ' + str(dtype) + ' is not supported')
