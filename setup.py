@@ -1,10 +1,10 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='rvg',
     version='0.1',
     description='random values generator',
-    long_descrption=open('README.md', 'r').read(),
+    long_description=open('README.md', 'r').read(),
     author='Sotiris Niarchos',
     author_email='sot.niarchos@gmail.com',
     # url='',
