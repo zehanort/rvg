@@ -38,7 +38,7 @@ class NumPyRVG:
         for field_name in dtype.names:
             field_dtype = dtype[field_name] if hasattr(dtype[field_name], 'names') and dtype[field_name].names else dtype[field_name].type
             retvals.append(self(field_dtype))
-        return tuple(retvals)
+        return np.array([tuple(retvals)], dtype=dtype)[0]
 
     def __call__(self, dtype, length=0):
 
