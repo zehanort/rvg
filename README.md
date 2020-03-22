@@ -1,11 +1,19 @@
-# &#127922; `rvg` - Random Values Generator
+# &#127922; rvg &#127922; - Random Values Generator
 ![Testing](https://github.com/zehanort/rvg/workflows/Testing/badge.svg)
+![PyPI release](https://img.shields.io/pypi/v/rvg?label=PyPI%20release)
 
 ## Description
 
 `rvg` is a Python 3 package utility to create random values of any Python 3 data type.
 
 Its main purpose is to help in applications where reliable -in terms of type safety- random values are needed (e.g. statistics, machine learning, general testing etc), and in specific layouts (e.g. "I want a `numpy` structured array of random pairs of ints and floats and I want it now").
+
+## Installation
+
+Either download the source code from the [releases page](https://github.com/zehanort/rvg/releases) or use `pip`:
+```
+pip install rvg
+```
 
 ## Current Status
 

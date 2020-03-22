@@ -8,7 +8,8 @@ setup(
     long_description_content_type='text/markdown',
     author='Sotiris Niarchos',
     author_email='sot.niarchos@gmail.com',
-    url='http://pypi.python.org/pypi/rvg',
+    url='https://github.com/zehanort/rvg',
+    download_url='https://github.com/zehanort/rvg/releases',
     license='MIT',
 
     classifiers=[
