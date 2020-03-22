@@ -10,35 +10,36 @@ dtypes = [
     np.float32, np.float64, np.double
 ]
 
+##### helpers #####
+letters = [c for c in string.ascii_lowercase]
+
 def randtype():
     return np.random.choice(dtypes)
-
-letters = [c for c in string.ascii_lowercase]
 
 def randname():
     return ''.join(np.random.choice(letters) for _ in range(5))
 
-##### helpers #####
 def create_struct_dtype():
     members = np.random.randint(2, 100)
     name = randname()
     return np.dtype(
         [(name + str(i), randtype()) for i in range(members)]
     )
+###################
 
 def test_scalar_dtypes():
     rand = NumPyRVG(1000)
     for dtype in dtypes:
-        val = rand(dtype)
-        assert type(val) == dtype
-###################
+        for _ in range(50):
+            val = rand(dtype)
+            assert type(val) == dtype
 
 def test_array_dtypes():
     rand = NumPyRVG(1000)
     for dtype in dtypes:
         length = np.random.randint(10, 100)
 
-        arr = rand(dtype, length)
+        arr = rand(dtype, length=length)
 
         assert type(arr) == np.ndarray
         assert len(arr) == length
@@ -54,7 +55,7 @@ def test_structured_dtypes():
 
         assert scl.dtype == struct_dtype
 
-        arr = rand(struct_dtype, length)
+        arr = rand(struct_dtype, length=length)
 
         assert type(arr) == np.ndarray
         assert len(arr) == length
@@ -109,3 +110,37 @@ def test_negative_length():
     with pytest.raises(ValueError) as e:
         rand(np.int32, neglen)
     assert str(e.value) == 'argument `length` must be a number greater or equal to 0'
+
+def test_a_b_limits_errors():
+
+    a, b = 2, 1
+    with pytest.raises(ValueError) as e:
+        NumPyRVG(a, b)
+    assert str(e.value) == 'argument `a` must be less than `b`'
+
+    a, b = -10, -5
+    with pytest.warns(Warning, match=f'value {b} for argument `b` will cause a runtime error if generation of values of unsigned type is attempted'):
+        rand = NumPyRVG(a, b)
+
+    with pytest.raises(ValueError) as e:
+        rand(np.uint32)
+        assert str(e.value).startswith('unproper limits')
+
+def test_a_b_limits_improper_usage():
+
+    a, b = 1, 1000
+    rand = NumPyRVG(a, b)
+
+    vals = rand(np.int8, length=100)
+    assert (vals >= a).all() and (vals <= b).all()
+
+def test_a_b_limits_proper_usage():
+
+    a, b = -17, 42
+    rand = NumPyRVG(a, b)
+
+    vals = rand(np.int32, length=100)
+    assert (vals >= a).all() and (vals <= b).all()
+
+    vals = rand(np.uint32, length=100)
+    assert (vals >= 0).all() and (vals <= b).all()
