@@ -4,7 +4,7 @@ import warnings
 class NumPyRVG:
     '''
     The NumPy Random Value Generator.
-    Generates random scalars (if `length` is not given) or 1D arrays of a certain type.
+    Generates random scalars (if `samples` is not given) or 1D arrays of a certain type.
     The type can be either a primitive one, a scalar or a struct.
     '''
     def __init__(self, a, b=None):
@@ -27,7 +27,7 @@ class NumPyRVG:
                     stacklevel=2
                 )
 
-    def scalar_or_array(self, rvg, limits, dtype, length):
+    def scalar_or_array(self, rvg, limits, dtype, samples):
 
         # fix limits depending on dtype
         if not hasattr(dtype, 'fields'):
@@ -45,7 +45,7 @@ class NumPyRVG:
             limits = rectified_limits
 
         # scalar requested
-        if not length:
+        if not samples:
             try:
                 val = rvg(*limits)
                 return dtype(val)
@@ -55,7 +55,7 @@ class NumPyRVG:
                 raise ValueError(f'unproper limits {limits} for the requested dtype')
 
         # array requested
-        vals = [rvg(*limits) for _ in range(length)]
+        vals = [rvg(*limits) for _ in range(samples)]
         try:
             return np.array(map(dtype, vals), dtype=dtype)
         except TypeError:
@@ -68,23 +68,23 @@ class NumPyRVG:
             retvals.append(self(field_dtype))
         return np.array([tuple(retvals)], dtype=dtype)[0]
 
-    def __call__(self, dtype, length=0):
+    def __call__(self, dtype, samples=0):
 
-        if length < 0:
-            raise ValueError('argument `length` must be a number greater or equal to 0')
+        if samples < 0:
+            raise ValueError('argument `samples` must be a number greater or equal to 0')
 
         # primitive types
         if np.issubdtype(dtype, np.signedinteger):
-            return self.scalar_or_array(np.random.randint, (self.a, self.b), dtype, length)
+            return self.scalar_or_array(np.random.randint, (self.a, self.b), dtype, samples)
 
         if np.issubdtype(dtype, np.unsignedinteger):
-            return self.scalar_or_array(np.random.randint, (max(self.a, 0), self.b), dtype, length)
+            return self.scalar_or_array(np.random.randint, (max(self.a, 0), self.b), dtype, samples)
 
         if np.issubdtype(dtype, np.floating):
-            return self.scalar_or_array(np.random.uniform, (self.a, self.b), dtype, length)
+            return self.scalar_or_array(np.random.uniform, (self.a, self.b), dtype, samples)
 
         # custom types, treated all the same way (i.e. as tuples)
         if hasattr(dtype, 'fields'):
-            return self.scalar_or_array(self.rand_val_for_non_primitive_type, (dtype,), dtype, length)
+            return self.scalar_or_array(self.rand_val_for_non_primitive_type, (dtype,), dtype, samples)
 
         raise NotImplementedError('dtype ' + str(dtype) + ' is not supported')

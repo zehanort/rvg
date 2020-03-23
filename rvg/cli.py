@@ -37,7 +37,7 @@ def cli():
     # default behavior
     if not len(sys.argv) > 1:
         import numpy as np
-        rand = NumPyRVG(0, 1)
+        rand = NumPyRVG(a=0, b=1)
         print(rand(np.float32))
         return
 

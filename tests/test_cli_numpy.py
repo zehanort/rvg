@@ -54,10 +54,10 @@ def test_negative_limit():
     _, cerr = command(f'rvg --numpy int8 --limits {neglim}')
     assert 'argument `limit` must be a number greater than 0' in cerr
 
-def test_negative_length():
+def test_negative_samples():
     neglen = np.random.randint(-100, -1)
     _, cerr = command(f'rvg --numpy int8 --limits 100 --samples {neglen}')
-    assert 'argument `length` must be a number greater or equal to 0' in cerr
+    assert 'argument `samples` must be a number greater or equal to 0' in cerr
 
 def test_a_b_limits_errors():
 

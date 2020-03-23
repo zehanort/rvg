@@ -37,28 +37,28 @@ def test_scalar_dtypes():
 def test_array_dtypes():
     rand = NumPyRVG(1000)
     for dtype in dtypes:
-        length = np.random.randint(10, 100)
+        samples = np.random.randint(10, 100)
 
-        arr = rand(dtype, length=length)
+        arr = rand(dtype, samples=samples)
 
         assert type(arr) == np.ndarray
-        assert len(arr) == length
+        assert len(arr) == samples
         assert arr.dtype == dtype
 
 def test_structured_dtypes():
     rand = NumPyRVG(1000)
     for _ in range(10):
-        length = np.random.randint(10, 100)
+        samples = np.random.randint(10, 100)
         struct_dtype = create_struct_dtype()
 
         scl = rand(struct_dtype)
 
         assert scl.dtype == struct_dtype
 
-        arr = rand(struct_dtype, length=length)
+        arr = rand(struct_dtype, samples=samples)
 
         assert type(arr) == np.ndarray
-        assert len(arr) == length
+        assert len(arr) == samples
         assert arr.dtype == struct_dtype
 
 def test_nested_structured_dtypes_simple():
@@ -91,7 +91,7 @@ def test_nested_structured_dtypes():
     rand = NumPyRVG(1000)
     for _ in range(10):
         members = np.random.randint(2, 100)
-        length = np.random.randint(10, 100)
+        samples = np.random.randint(10, 100)
         nested_struct_dtype = np.dtype(
             [(''.join(np.random.choice(letters) for _ in range(5)), create_struct_dtype()) for _ in range(members)]
         )
@@ -104,12 +104,12 @@ def test_negative_limit():
         NumPyRVG(neglim)
     assert str(e.value) == 'argument `limit` must be a number greater than 0'
 
-def test_negative_length():
+def test_negative_samples():
     rand = NumPyRVG(1000)
     neglen = np.random.randint(-100, 0)
     with pytest.raises(ValueError) as e:
         rand(np.int32, neglen)
-    assert str(e.value) == 'argument `length` must be a number greater or equal to 0'
+    assert str(e.value) == 'argument `samples` must be a number greater or equal to 0'
 
 def test_a_b_limits_errors():
 
@@ -131,7 +131,7 @@ def test_a_b_limits_improper_usage():
     a, b = 1, 1000
     rand = NumPyRVG(a, b)
 
-    vals = rand(np.int8, length=100)
+    vals = rand(np.int8, samples=100)
     assert (vals >= a).all() and (vals <= b).all()
 
 def test_a_b_limits_proper_usage():
@@ -139,8 +139,8 @@ def test_a_b_limits_proper_usage():
     a, b = -17, 42
     rand = NumPyRVG(a, b)
 
-    vals = rand(np.int32, length=100)
+    vals = rand(np.int32, samples=100)
     assert (vals >= a).all() and (vals <= b).all()
 
-    vals = rand(np.uint32, length=100)
+    vals = rand(np.uint32, samples=100)
     assert (vals >= 0).all() and (vals <= b).all()
