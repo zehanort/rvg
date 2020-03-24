@@ -1,6 +1,5 @@
 import subprocess as sp
 import numpy as np
-import string
 
 dtypes = [
     'int8', 'int16', 'int32', 'int64',
