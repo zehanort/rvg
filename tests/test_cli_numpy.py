@@ -22,6 +22,16 @@ def test_default_behavior():
     assert not cerr
     assert 0 <= float(cout) <= 1
 
+def test_no_generator_flag():
+    _, cerr = command('rvg --samples 10')
+    assert 'Please provide a generator flag, like --numpy <dtype>' in cerr
+    _, cerr = command('rvg --limits 10')
+    assert 'Please provide a generator flag, like --numpy <dtype>' in cerr
+
+def test_non_existent_numpy_dtype():
+    _, cerr = command('rvg --numpy xxx')
+    assert 'numpy does not have the type `xxx`' in cerr
+
 def test_scalar_dtypes():
     for dtype, limit in zip(dtypes[:4], [100, 10000, 1000000, 1000000000]):
         a, b = sorted(np.random.randint(-limit, limit, 2))
