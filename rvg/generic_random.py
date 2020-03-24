@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.lib.recfunctions import _get_fieldspec as fields
-from utils import isscalar, isstruct, issubarray, scalar_uniform_dist, to_tuple
+from utils import *
 
 class NumPyRVG:
     '''
@@ -8,18 +8,18 @@ class NumPyRVG:
 
     Define a struct with 3 scalar fields
     >>> simple_struct = np.dtype([
-        ('f0', np.float32),
-        ('f1', np.int64),
-        ('f2', np.longlong)
-    ])
+    ...     ('f0', np.float32),
+    ...     ('f1', np.int64),
+    ...     ('f2', np.longlong)
+    ... ])
 
     Define distribution parameters for each field as a dictionary tree
         that mirrors `simple_struct`'s structure
     >>> simple_struct_param = {
-        'f0' : 17,
-        'f1' : 128,
-        'f2' : 42
-    }
+    ...     'f0' : 17,
+    ...     'f1' : 128,
+    ...     'f2' : 42
+    ... }
 
     Create a generator for our `simple_struct`
     >>> simple_struct_gen = NumPyRVG(simple_struct)
@@ -91,12 +91,9 @@ class NumPyRVG:
         if isstruct(self.dtype):
             r = np.empty(shape or 1, dtype=self.dtype)
             for name, dtype in fields(self.dtype):
-                try:
-                    param = params[name]
-                except TypeError:
-                    param = params
                 g = NumPyRVG(dtype)
-                r[name] = g(param, shape)
+                field_params = maybe_dict_get(params, name)
+                r[name] = g(field_params, shape)
             return r if shape else r[0]
         elif issubarray(self.dtype):
             item_dtype, sub_shape = self.dtype.subdtype

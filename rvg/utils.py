@@ -21,6 +21,12 @@ def issubarray(dtype):
 def isscalar(dtype):
     return hasattr(dtype, 'names') and not dtype.names
 
+def maybe_dict_get(maybe_dict, key):
+    try:
+        return maybe_dict.get(key)
+    except AttributeError:
+        return maybe_dict
+
 def to_tuple(shape):
     if not shape:
         return ()
