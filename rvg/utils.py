@@ -20,3 +20,12 @@ def issubarray(dtype):
     return hasattr(dtype, 'subdtype') and dtype.subdtype
 def isscalar(dtype):
     return hasattr(dtype, 'names') and not dtype.names
+
+def to_tuple(shape):
+    if not shape:
+        return ()
+    else:
+        try:
+            return tuple(shape)
+        except TypeError:
+            return (shape,)

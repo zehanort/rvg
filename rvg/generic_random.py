@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.lib.recfunctions import _get_fieldspec as fields
-from utils import isscalar, isstruct, issubarray, scalar_uniform_dist
+from utils import isscalar, isstruct, issubarray, scalar_uniform_dist, to_tuple
 
 class NumPyRVG:
     '''
@@ -101,7 +101,7 @@ class NumPyRVG:
         elif issubarray(self.dtype):
             item_dtype, sub_shape = self.dtype.subdtype
             g = NumPyRVG(item_dtype)
-            return g(params, (shape or ()) + sub_shape)
+            return g(params, to_tuple(shape) + sub_shape)
         elif isscalar(self.dtype):
             return self.scalar_dist(self.dtype, params, shape)
         else:
