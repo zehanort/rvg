@@ -1,5 +1,6 @@
 # &#127922; rvg &#127922; - Random Values Generator
 ![Testing](https://github.com/zehanort/rvg/workflows/Testing/badge.svg)
+[![codecov](https://codecov.io/gh/zehanort/rvg/branch/dev/graph/badge.svg)](https://codecov.io/gh/zehanort/rvg)
 [![CodeFactor](https://www.codefactor.io/repository/github/zehanort/rvg/badge)](https://www.codefactor.io/repository/github/zehanort/rvg)
 ![PyPI release](https://img.shields.io/pypi/v/rvg?label=PyPI%20release)
 
