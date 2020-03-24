@@ -1,6 +1,12 @@
 import numpy as np
 from numpy.lib.recfunctions import _get_fieldspec as fields
-from utils import *
+from utils import (
+        scalar_uniform_dist,
+        isscalar,
+        issubarray,
+        isstruct,
+        to_tuple,
+        maybe_dict_get)
 
 class NumPyRVG:
     '''
@@ -91,14 +97,15 @@ class NumPyRVG:
         if isstruct(self.dtype):
             r = np.empty(shape or 1, dtype=self.dtype)
             for name, dtype in fields(self.dtype):
-                g = NumPyRVG(dtype)
                 field_params = maybe_dict_get(params, name)
+                g = NumPyRVG(dtype)
                 r[name] = g(field_params, shape)
             return r if shape else r[0]
         elif issubarray(self.dtype):
             item_dtype, sub_shape = self.dtype.subdtype
+            field_shape = to_tuple(shape) + sub_shape
             g = NumPyRVG(item_dtype)
-            return g(params, to_tuple(shape) + sub_shape)
+            return g(params, field_shape)
         elif isscalar(self.dtype):
             return self.scalar_dist(self.dtype, params, shape)
         else:
