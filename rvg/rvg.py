@@ -51,8 +51,6 @@ class NumPyRVG:
                 return dtype(val)
             except TypeError:
                 return val
-            except ValueError:
-                raise ValueError(f'unproper limits {limits} for the requested dtype')
 
         # array requested
         vals = [rvg(*limits) for _ in range(samples)]
