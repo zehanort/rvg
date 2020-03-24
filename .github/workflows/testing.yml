@@ -31,8 +31,7 @@ jobs:
       run: |
         pip install pytest pytest-cov
         pytest --cov=rvg --cov-report xml
+        cat coverage.xml
     - name: Upload coverage to Codecov
       if: matrix.python-version == 3.8
       uses: codecov/codecov-action@v1
-      run: |
-        cat coverage.xml
