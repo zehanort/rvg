@@ -16,5 +16,7 @@ def scalar_uniform_dist(dtype, params, shape):
 
 def isstruct(dtype):
     return hasattr(dtype, 'names') and dtype.names
+def issubarray(dtype):
+    return hasattr(dtype, 'subdtype') and dtype.subdtype
 def isscalar(dtype):
     return hasattr(dtype, 'names') and not dtype.names
