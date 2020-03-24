@@ -13,7 +13,7 @@ def randtype():
     return np.random.choice(dtypes)
 
 def command(cmd):
-    cmdout = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
+    cmdout = sp.run(cmd.split(), stdout=sp.PIPE, stderr=sp.PIPE)
     return cmdout.stdout.decode('ascii'), cmdout.stderr.decode('ascii')
 ###################
 
