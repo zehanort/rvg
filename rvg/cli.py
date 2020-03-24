@@ -35,7 +35,7 @@ parser.add_argument('-l', '--limits',
 def cli():
 
     # default behavior
-    if not len(sys.argv) > 1:
+    if len(sys.argv) == 1:
         import numpy as np
         rand = NumPyRVG(a=0, b=1)
         print(rand(np.float32))
@@ -43,7 +43,7 @@ def cli():
 
     args = parser.parse_args()
     if args.numpy is None:
-        sys.stderr.write('Please provide a data type\n')
+        sys.stderr.write('Please provide a generator flag, like --numpy <dtype>\n')
         exit(1)
 
     if args.numpy:
@@ -52,7 +52,7 @@ def cli():
         try:
             vals = rand(eval(f'np.{args.numpy}'), args.samples)
         except AttributeError:
-            sys.stderr.write(f'ERROR: numpy does not have the type `{args.numpy}`\n')
+            sys.stderr.write(f'numpy does not have the type `{args.numpy}`\n')
             exit(1)
         if args.samples == 0:
             print(vals)

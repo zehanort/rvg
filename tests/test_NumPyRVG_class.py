@@ -1,7 +1,6 @@
 import pytest
 from rvg import NumPyRVG
 import numpy as np
-import os
 import string
 
 dtypes = [
@@ -32,7 +31,7 @@ def test_scalar_dtypes():
     for dtype in dtypes:
         for _ in range(50):
             val = rand(dtype)
-            assert type(val) == dtype
+            assert isinstance(val, dtype)
 
 def test_array_dtypes():
     rand = NumPyRVG(1000)
@@ -41,7 +40,7 @@ def test_array_dtypes():
 
         arr = rand(dtype, samples=samples)
 
-        assert type(arr) == np.ndarray
+        assert isinstance(arr, np.ndarray)
         assert len(arr) == samples
         assert arr.dtype == dtype
 
@@ -57,13 +56,14 @@ def test_structured_dtypes():
 
         arr = rand(struct_dtype, samples=samples)
 
-        assert type(arr) == np.ndarray
+        assert isinstance(arr, np.ndarray)
         assert len(arr) == samples
         assert arr.dtype == struct_dtype
 
 def test_nested_structured_dtypes_simple():
+
     rand = NumPyRVG(1000)
-    members = 2
+
     dtypes = [
         [randtype(), randtype()],
         [randtype(), randtype()],
@@ -96,7 +96,8 @@ def test_nested_structured_dtypes():
             [(''.join(np.random.choice(letters) for _ in range(5)), create_struct_dtype()) for _ in range(members)]
         )
 
-        val = rand(nested_struct_dtype)
+    # TODO: a more complete test
+    rand(nested_struct_dtype, samples=samples)
 
 def test_negative_limit():
     neglim = np.random.randint(-100, 0)

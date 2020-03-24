@@ -1,6 +1,5 @@
 import subprocess as sp
 import numpy as np
-import string
 
 dtypes = [
     'int8', 'int16', 'int32', 'int64',
@@ -13,7 +12,7 @@ def randtype():
     return np.random.choice(dtypes)
 
 def command(cmd):
-    cmdout = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
+    cmdout = sp.run(cmd.split(), stdout=sp.PIPE, stderr=sp.PIPE)
     return cmdout.stdout.decode('ascii'), cmdout.stderr.decode('ascii')
 ###################
 
@@ -21,6 +20,16 @@ def test_default_behavior():
     cout, cerr = command('rvg')
     assert not cerr
     assert 0 <= float(cout) <= 1
+
+def test_no_generator_flag():
+    _, cerr = command('rvg --samples 10')
+    assert 'Please provide a generator flag, like --numpy <dtype>' in cerr
+    _, cerr = command('rvg --limits 10')
+    assert 'Please provide a generator flag, like --numpy <dtype>' in cerr
+
+def test_non_existent_numpy_dtype():
+    _, cerr = command('rvg --numpy xxx')
+    assert 'numpy does not have the type `xxx`' in cerr
 
 def test_scalar_dtypes():
     for dtype, limit in zip(dtypes[:4], [100, 10000, 1000000, 1000000000]):
