@@ -1,6 +1,6 @@
 import numpy as np
 
-def scalar_uniform_dist(dtype, params, shape):
+def uniform_dist(dtype, params, shape):
     base_mapping = {
         np.unsignedinteger : lambda l, h, shape: np.random.randint(max(l, 0), h, shape),
         np.signedinteger   : np.random.randint,
@@ -28,10 +28,7 @@ def maybe_dict_get(maybe_dict, key):
         return maybe_dict
 
 def to_tuple(shape):
-    if not shape:
-        return ()
-    else:
-        try:
-            return tuple(shape)
-        except TypeError:
-            return (shape,)
+    try:
+        return tuple(shape)
+    except TypeError:
+        return (shape,) if shape is not None else ()

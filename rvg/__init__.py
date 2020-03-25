@@ -1,3 +1,3 @@
-from .rvg import NumPyRVG
+from .rvg import random
 
-__all__ = ['NumPyRVG']
+__all__ = ['random']
