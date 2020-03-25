@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.lib.recfunctions import _get_fieldspec as fields
-from utils import isscalar, issubarray, isstruct, to_tuple, maybe_dict_get, uniform_dist
+from .utils import isscalar, issubarray, isstruct, to_tuple, maybe_dict_get, uniform_dist
 
 def random(dtype, params, shape=None, dist=None):
     dist = dist or uniform_dist

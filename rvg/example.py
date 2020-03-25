@@ -1,13 +1,13 @@
 #  struct knode {
-        #  int location;
-        #  int indices [DEFAULT_ORDER + 1];
-        #  int  keys [DEFAULT_ORDER + 1];
-        #  bool is_leaf;
-        #  int num_keys;
+#          int location;
+#          int indices [DEFAULT_ORDER + 1];
+#          int  keys [DEFAULT_ORDER + 1];
+#          bool is_leaf;
+#          int num_keys;
 #  } knode;
 
 import numpy as np
-from rvg import random
+import rvg
 
 DEFAULT_ORDER = 5
 
@@ -27,6 +27,6 @@ knode_params = {
     'num_keys'  : (0, DEFAULT_ORDER + 1)
 }
 
-knodes = random(knode, knode_params, 5)
+knodes = rvg.random(knode, knode_params, 5)
 print(knodes)
 

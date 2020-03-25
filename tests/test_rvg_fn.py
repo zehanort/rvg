@@ -6,6 +6,8 @@ def struct(t, dtype):
     return np.array([t], dtype=dtype)[0]
 
 def equal(a, b):
+    print(a)
+    print(b)
     return (a == b).all()
 
 # Set seed for reproducibility
