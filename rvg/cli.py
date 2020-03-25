@@ -18,7 +18,7 @@ parser.add_argument('--numpy',
 parser.add_argument('-s', '--samples',
     type=int,
     help='number of samples to produce, one per line (0 or 1 both mean a single value)',
-    default=0
+    default=1
 )
 
 parser.add_argument('-l', '--limits',
@@ -29,7 +29,7 @@ parser.add_argument('-l', '--limits',
     if 2 integers are given, `a` and `b`, where a < b: define lower and upper numerical limit for produced values
     as (a, b) for signed types or (max(a, 0), b) for unsigned values, in which case b must be a positive integer
     ''',
-    default=[0, 1]
+    default=(0, 1)
 )
 
 def cli():
@@ -37,7 +37,7 @@ def cli():
     # default behavior
     if len(sys.argv) == 1:
         import numpy as np
-        rand = NumPyRVG(a=0, b=1)
+        rand = NumPyRVG(limits=(0, 1))
         print(rand(np.float32))
         return
 
@@ -48,13 +48,16 @@ def cli():
 
     if args.numpy:
         import numpy as np
-        rand = NumPyRVG(*args.limits)
+        if len(args.limits) == 1:
+            rand = NumPyRVG(limit=args.limits[0])
+        else:
+            rand = NumPyRVG(limits=args.limits)
         try:
             vals = rand(eval(f'np.{args.numpy}'), args.samples)
         except AttributeError:
             sys.stderr.write(f'numpy does not have the type `{args.numpy}`\n')
             exit(1)
-        if args.samples == 0:
+        if args.samples == 1:
             print(vals)
         else:
             for val in vals:

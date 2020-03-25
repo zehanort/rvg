@@ -1,4 +1,3 @@
-import pytest
 import numpy as np
 import rvg
 
@@ -31,7 +30,8 @@ def test_simple_struct_array():
     # Set seed for reproducibility
     np.random.seed(42)
 
-    random = rvg.random(simple_struct, simple_struct_param, (5, 2))
+    randstruct = rvg.NumPyRVG(dtype=simple_struct)
+    random = randstruct(simple_struct_param, (5, 2))
     expected = np.array([
         [( -4.265636 ,   21, -22), ( 15.324286 ,  -76, -10)],
         [(  7.887794 , -127,  33), (  3.3543885,  -41,  15)],
@@ -47,7 +47,8 @@ def test_simple_struct_single():
     # Set seed for reproducibility
     np.random.seed(42)
 
-    random = rvg.random(simple_struct, simple_struct_param)
+    randstruct = rvg.NumPyRVG(dtype=simple_struct)
+    random = randstruct(simple_struct_param)
     expected = struct(
             (-4.265636, -36, -28),
             dtype=[('f0', '<f4'), ('f1', '<i8'), ('f2', '<i8')])
@@ -64,16 +65,17 @@ nested_struct = np.dtype([
 #  We can leave out the details if we want the whole subtree of a field
 #      to use the same parameters (note `f0`)
 nested_struct_param = {
-    'f0' : (-17, 42),
+    'f0' : (0, 42),
     'f1' : 42,
     'f2' : simple_struct_param
 }
 
-def test_nestest_struct():
+def test_nested_struct():
     # Set seed for reproducibility
     np.random.seed(42)
 
-    random  = rvg.random(nested_struct, nested_struct_param, (5, 2))
+    randstruct = rvg.NumPyRVG(dtype=nested_struct)
+    random = randstruct(nested_struct_param, (5, 2))
     expected = np.array([
         [((  5.097867 ,   4, -6), 15, ( 15.03486  ,  -48, -39)),
          (( 39.092144 ,  35, 40), 14, (  2.1517994,   35,  11))],
@@ -106,7 +108,8 @@ def test_struct_array_member():
     # Set seed for reproducibility
     np.random.seed(42)
 
-    random = rvg.random(struct_array_member, struct_array_member_param, (3, 2))
+    randstruct = rvg.NumPyRVG(dtype=struct_array_member)
+    random = randstruct(struct_array_member_param, (3, 2))
     expected = np.array([
         [(  9, [(-13.600853  , -114, -25), ( -1.3855376 ,   61, -39), ( -5.6539073 ,   61,  17)]),
          (-28, [(-12.142529  ,   46, -29), (  5.130208  ,   61, -34), (-15.082006  ,  -78,  10)])],

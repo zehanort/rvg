@@ -1,23 +1,29 @@
 import numpy as np
 
 def uniform_dist(dtype, params, shape):
-    base_mapping = {
-        np.unsignedinteger : lambda l, h, shape: np.random.randint(max(l, 0), h, shape),
-        np.signedinteger   : np.random.randint,
-        np.floating        : np.random.uniform
-    }
 
     try:
-       low, high = params
+        low, high = params
     except TypeError:
         low, high = -params, params
 
-    return base_mapping[dtype.type.__base__](low, high, shape)
+    if np.issubdtype(dtype, np.signedinteger):
+        val = np.random.randint(low, high, shape, dtype.type)
+    elif np.issubdtype(dtype, np.unsignedinteger):
+        val = np.random.randint(max(low, 0), high, shape, dtype.type)
+    elif np.issubdtype(dtype, np.floating):
+        val = np.random.uniform(low, high, shape)
+    else:
+        raise NotImplementedError(f'no known uniform distribution for dtype {dtype}')
+
+    return val if shape != 1 else val[0]
 
 def isstruct(dtype):
     return hasattr(dtype, 'names') and dtype.names
+
 def issubarray(dtype):
     return hasattr(dtype, 'subdtype') and dtype.subdtype
+
 def isscalar(dtype):
     return hasattr(dtype, 'names') and not dtype.names
 

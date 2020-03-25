@@ -35,6 +35,7 @@ def test_scalar_dtypes():
     for dtype, limit in zip(dtypes[:4], [100, 10000, 1000000, 1000000000]):
         a, b = sorted(np.random.randint(-limit, limit, 2))
         b += 1
+        print(f'rvg --numpy {dtype} --limits {a} {b}')
         cout, _ = command(f'rvg --numpy {dtype} --limits {a} {b}')
         assert int(cout) >= a
         assert int(cout) <= b
@@ -63,23 +64,20 @@ def test_negative_limit():
     _, cerr = command(f'rvg --numpy int8 --limits {neglim}')
     assert 'argument `limit` must be a number greater than 0' in cerr
 
-def test_negative_samples():
-    neglen = np.random.randint(-100, -1)
-    _, cerr = command(f'rvg --numpy int8 --limits 100 --samples {neglen}')
-    assert 'argument `samples` must be a number greater or equal to 0' in cerr
+# def test_negative_samples():
+#     neglen = np.random.randint(-100, -1)
+#     _, cerr = command(f'rvg --numpy int8 --limits 100 --samples {neglen}')
+#     assert 'argument `samples` must be a number greater or equal to 0' in cerr
 
 def test_a_b_limits_errors():
 
     a, b = 2, 1
     _, cerr = command(f'rvg --numpy uint16 --limits {a} {b}')
-    assert 'argument `a` must be less than `b`' in cerr
+    assert 'the lower limit must be strictly less than the upper limit' in cerr
 
     a, b = -10, -5
     _, cerr = command(f'rvg --numpy int16 --limits {a} {b}')
-    assert f'value {b} for argument `b` will cause a runtime error if generation of values of unsigned type is attempted' in cerr
-
-    _, cerr = command(f'rvg --numpy uint16 --limits {a} {b}')
-    assert 'unproper limits' in cerr
+    assert f'value {b} as the upper limit will cause a runtime error if generation of values of unsigned type is attempted' in cerr
 
 def test_a_b_limits_improper_usage():
 
