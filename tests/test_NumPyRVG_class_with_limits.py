@@ -125,7 +125,7 @@ def test_a_b_limits_errors():
     assert str(e.value) == 'the lower limit must be strictly less than the upper limit'
 
     a, b = -10, -5
-    with pytest.warns(Warning, match=f'value {b} as the upper limit will cause a runtime error if generation of values of unsigned type is attempted'):
+    with pytest.warns(Warning, match='value ' + str(b) + ' as the upper limit will cause a runtime error if generation of values of unsigned type is attempted'):
         rand = NumPyRVG(limits=(a, b))
 
     with pytest.raises(ValueError) as e:
