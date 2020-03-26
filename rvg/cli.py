@@ -53,9 +53,9 @@ def cli():
         else:
             rand = NumPyRVG(limits=args.limits)
         try:
-            vals = rand(eval(f'np.{args.numpy}'), shape=args.samples)
+            vals = rand(eval('np.' + args.numpy), shape=args.samples)
         except AttributeError:
-            sys.stderr.write(f'numpy does not have the type `{args.numpy}`\n')
+            sys.stderr.write('numpy does not have the type `' + args.numpy + '`\n')
             exit(1)
         if args.samples is None:
             print(vals)
