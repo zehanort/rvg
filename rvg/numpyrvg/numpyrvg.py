@@ -59,10 +59,14 @@ class NumPyRVG:
 
         self.dtype = dtype
 
-    def __call__(self, arg, shape=None, dist=None):
+    def __call__(self, arg=None, shape=None, dist=None):
         if self.dtype is not None:
+            if arg is None:
+                raise TypeError('missing 1 required argument describing the limit(s)')
             return self.random(self.dtype, arg, shape, dist)
         elif self.a is not None:
+            if arg is None:
+                raise TypeError('missing 1 required argument describing the dtype')
             return self.random(arg, (self.a, self.b), shape, dist)
         raise NotImplementedError('this call can not be served')
 

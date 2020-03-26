@@ -10,16 +10,21 @@
 
 Its main purpose is to help in applications where reliable -in terms of type safety- random values are needed (e.g. statistics, machine learning, general testing etc), and in specific layouts (e.g. "I want a `numpy` structured array of random pairs of ints and floats and I want it now").
 
+## Authors
+[Sotiris Niarchos](https://github.com/zehanort) and [George Papadopoulos](https://github.com/gepapado)
+
 ## Installation
 
-Either download the source code from the [releases page](https://github.com/zehanort/rvg/releases) or use `pip`:
+You can either:
+- download the source code from the [releases page](https://github.com/zehanort/rvg/releases) or clone the repo (the `master` branch will always mirror the latest release)
+- use `pip`:
 ```
 pip install rvg
 ```
 
 ## Current Status
 
-### Pre-release
+### Alpha release
 
 For the time being, only `numpy` types are supported. More specifically:
 - `numpy` scalar data types
@@ -30,53 +35,107 @@ After the alpha release, more features will be implemented, focusing mainly on P
 
 ## Usage
 
-Right now, `rvg` provides the `NumPyRVG` interface to generate random `numpy` values.
-```Python console
->>> from rvg import NumPyRVG
->>> import numpy as np
->>> rand = NumPyRVG(limit=1000) # `limit`: lower and upper limit of numeric values to be generated
+Right now, `rvg` provides 2 interafaces for random values generation through the `NumPyRVG` class:
+1. Create a generator of a *certain data type*
+2. Create a generator with *specific numerical limits*
+A demonstration follows:
+
+```Python
+from rvg import NumPyRVG
+import numpy as np
+
+# Interface 1
+randuint = NumPyRVG(dtype=np.uint16)
+
+# Interface 2
+randsmall = NumPyRVG(limit=10) # same as limits=(-10, 10)
+randbig = NumPyRVG(limits=(1e10, 1e100))
 ```
+
 The functionalities of `NumPyRVG` include the generation of:
+
 - `numpy` scalar data types:
+
 ```Python console
->>> rand(np.int8)
-78
->>> rand(np.uint16)
-866
->>> i = rand(np.int8)
->>> u = rand(np.uint16)
->>> f = rand(np.float32)
->>> d = rand(np.double)
->>> i, u, f, d
-(-101, 720, -234.16493, -882.7847115143803)
->>> type(i), type(u), type(f), type(d)
-(<class 'numpy.int8'>, <class 'numpy.uint16'>, <class 'numpy.float32'>, <class 'numpy.float64'>)
+>>> randsmall(np.uint8)
+8
+>>> randbig(np.double)
+1.9296971162995923e+99
+>>> res = [randsmall(t) for t in [np.int8, np.uint16, np.float32, np.double]]
+>>> res
+[7, 1, 3.0503626, 3.759943941132951]
+>>> list(map(type, res))
+[<class 'numpy.int8'>, <class 'numpy.uint16'>, <class 'numpy.float32'>, <class 'numpy.float64'>]
 ```
+
 - `numpy` array data types from scalar types:
+
 ```Python console
->>> rand(np.uint8, length=3) # `length`: length of the output numpy array
-array([ 72, 222, 146], dtype=uint8)
->>> rand(np.float32, length=4)
-array([ 939.84973, -903.3939 , -805.2647 , -676.1155 ], dtype=float32)
+>>> randuint((50, 100), shape=3)
+array([79, 81, 85], dtype=uint16)
+>>> randsmall(np.float16, shape=(4, 2))
+array([[-7.23 , -9.31 ],
+       [-4.97 , -6.06 ],
+       [-5.19 , -3.344],
+       [-6.586, -3.133]], dtype=float16)
 ```
-- `numpy` structured array data types (structured datatypes can be nested):
+
+- `numpy` structured array data types (structured datatypes can be nested). Limits and shapes can be given in the form of a dictionary, describing all limits and/or shapes of each field of each level of the structured data type. An example follows:
+
+```Python
+#  Consider the struct definition below, in C:
+##############################################
+#  typedef struct knode {
+#      int location;
+#      int indices [3];
+#      int  keys [3];
+#      bool is_leaf;
+#      int num_keys;
+#  } knode;
+##############################################
+
+import numpy as np
+from rvg import NumPyRVG
+
+knode = np.dtype([
+    ('location', int),
+    ('indices', (int, 3)),
+    ('keys', (int, 3)),
+    ('is_leaf', int),
+    ('num_keys', int)
+])
+
+knode_params = {
+    'location'  : (0, 10),
+    'indices'   : 42,
+    'keys'      : 117,
+    'is_leaf'   : (0, 2),
+    'num_keys'  : (0, 256)
+}
+
+random_knode = NumPyRVG(dtype=knode)
+knodes_array = random_knode(knode_params, 5)
+print(knodes_array)
+
+```
+The output of the above script is a nested structured `numpy` array consisting of 5 `knode` structs, randomly initialized!
+
+```
+[(0, [-18, -11,  34], [  89,   35,  -57], 1, 189)
+ (6, [-35,   0,   4], [ -56,  -65,   26], 1, 217)
+ (4, [-29,  40,  37], [  93, -116,   91], 0,  38)
+ (2, [-28, -42, -36], [-101,    0,  -43], 0,  82)
+ (0, [-14, -19, -13], [ -98,  -46,  -78], 1, 238)]
+```
+If the script was run in an interpreter, you could inspect its type as well:
+
 ```Python console
->>> type1 = np.dtype('int,float')
->>> type2 = np.dtype('double,uint,long')
->>> rand(type1)
-(849, -626.7902777962995)
->>> type(rand(type1)) # single values that correspond to structured data types
-<class 'tuple'>       # are considered to be tuples
->>> rand(type1, length=3)
-array([(-594,  451.64958214), ( 965,  -22.77642568),
-       (-713, -100.61156315)], dtype=[('f0', '<i8'), ('f1', '<f8')])
->>> rand(type2, length=3)
-array([(506.01690599,  48,  946), (643.06826309, 363, -865),
-       (264.05285682, 214,  395)],
-      dtype=[('f0', '<f8'), ('f1', '<u8'), ('f2', '<i8')])
->>> type3 = np.dtype([('t1', type1), ('t2', type2)]) # a nested structured data type
->>> rand(type3, length=2)
-array([((716,  434.4316939), (-143.98226673, 610, -354)),
-       ((307, -894.4985342), ( 234.0804783 , 678,  327))],
-      dtype=[('t1', [('f0', '<i8'), ('f1', '<f8')]), ('t2', [('f0', '<f8'), ('f1', '<u8'), ('f2', '<i8')])])
+>>> knodes_array
+array([(0, [-18, -11,  34], [  89,   35,  -57], 1, 189),
+       (6, [-35,   0,   4], [ -56,  -65,   26], 1, 217),
+       (4, [-29,  40,  37], [  93, -116,   91], 0,  38),
+       (2, [-28, -42, -36], [-101,    0,  -43], 0,  82),
+       (0, [-14, -19, -13], [ -98,  -46,  -78], 1, 238)],
+      dtype=[('location', '<i8'), ('indices', '<i8', (3,)), ('keys', '<i8', (3,)), ('is_leaf', '<i8'), ('num_keys', '<i8')])
 ```
+The feature of nesting is not limited in arrays; you can create data types that are as complex as you want and/or need! See the relative [test](https://github.com/zehanort/rvg/blob/master/tests/test_NumPyRVG_class_with_types.py) as an example of struct nesting.
