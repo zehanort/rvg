@@ -27,7 +27,7 @@ setup(
 
     install_requires=['numpy'],
     python_requires='>=3.5',
-    packages=['rvg'],
+    packages=['rvg', 'rvg.numpyrvg'],
 
     entry_points={
         'console_scripts': ['rvg=rvg.cli:cli']
