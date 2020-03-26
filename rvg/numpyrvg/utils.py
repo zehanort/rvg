@@ -8,15 +8,12 @@ def uniform_dist(dtype, params, shape):
         low, high = -params, params
 
     if np.issubdtype(dtype, np.signedinteger):
-        val = np.random.randint(low, high, shape, dtype.type)
-    elif np.issubdtype(dtype, np.unsignedinteger):
-        val = np.random.randint(max(low, 0), high, shape, dtype.type)
-    elif np.issubdtype(dtype, np.floating):
-        val = np.random.uniform(low, high, shape)
-    else:
-        raise NotImplementedError(f'no known uniform distribution for dtype {dtype}')
-
-    return val if shape != 1 else val[0]
+        return np.random.randint(low, high, shape, dtype.type)
+    if np.issubdtype(dtype, np.unsignedinteger):
+        return np.random.randint(max(low, 0), high, shape, dtype.type)
+    if np.issubdtype(dtype, np.floating):
+        return np.random.uniform(low, high, shape)
+    raise NotImplementedError(f'no known uniform distribution for dtype {dtype}')
 
 def isstruct(dtype):
     return hasattr(dtype, 'names') and dtype.names

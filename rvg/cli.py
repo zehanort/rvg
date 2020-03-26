@@ -17,8 +17,8 @@ parser.add_argument('--numpy',
 
 parser.add_argument('-s', '--samples',
     type=int,
-    help='number of samples to produce, one per line (0 or 1 both mean a single value)',
-    default=1
+    help='number of samples to produce, one per line (default - a single value)',
+    default=None
 )
 
 parser.add_argument('-l', '--limits',
@@ -53,11 +53,11 @@ def cli():
         else:
             rand = NumPyRVG(limits=args.limits)
         try:
-            vals = rand(eval(f'np.{args.numpy}'), args.samples)
+            vals = rand(eval(f'np.{args.numpy}'), shape=args.samples)
         except AttributeError:
             sys.stderr.write(f'numpy does not have the type `{args.numpy}`\n')
             exit(1)
-        if args.samples == 1:
+        if args.samples is None:
             print(vals)
         else:
             for val in vals:

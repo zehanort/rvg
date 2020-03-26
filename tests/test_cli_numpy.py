@@ -35,23 +35,19 @@ def test_scalar_dtypes():
     for dtype, limit in zip(dtypes[:4], [100, 10000, 1000000, 1000000000]):
         a, b = sorted(np.random.randint(-limit, limit, 2))
         b += 1
-        print(f'rvg --numpy {dtype} --limits {a} {b}')
         cout, _ = command(f'rvg --numpy {dtype} --limits {a} {b}')
-        assert int(cout) >= a
-        assert int(cout) <= b
+        assert a <= int(cout) <= b
 
     for dtype, limit in zip(dtypes[4:8], [200, 20000, 2000000, 2000000000]):
         a, b = sorted(np.random.randint(0, limit, 2))
         b += 1
         cout, _ = command(f'rvg --numpy {dtype} --limits {a} {b}')
-        assert int(cout) >= a
-        assert int(cout) <= b
+        assert a <= int(cout) <= b
 
     for dtype in dtypes[8:]:
         a, b = sorted(np.random.randint(-1000, 1000, 2))
         cout, _ = command(f'rvg --numpy {dtype} --limits {a} {b}')
-        assert float(cout) >= a
-        assert float(cout) <= b
+        assert a <= float(cout) <= b
 
 def test_array_dtypes():
     samples = np.random.randint(10, 100)
