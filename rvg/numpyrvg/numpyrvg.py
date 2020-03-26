@@ -52,7 +52,7 @@ class NumPyRVG:
             self.a, self.b = a, b
             if b < 0 and dtype is None:
                 warnings.warn(
-                    f'value {b} as the upper limit will cause a runtime error if generation of values of unsigned type is attempted',
+                    'value ' + str(b) + ' as the upper limit will cause a runtime error if generation of values of unsigned type is attempted',
                     Warning,
                     stacklevel=2
                 )
