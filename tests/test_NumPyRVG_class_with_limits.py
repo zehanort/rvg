@@ -138,7 +138,7 @@ def test_a_b_limits_improper_usage():
     rand = NumPyRVG(limits=(a, b))
 
     with pytest.raises(ValueError) as e:
-        rand(np.int8, shape=100)
+        rand(np.int8, shape=100, type_limits=False)
     assert 'high is out of bounds for int8' in str(e)
 
 def test_a_b_limits_proper_usage():

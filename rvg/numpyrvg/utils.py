@@ -1,6 +1,6 @@
 import numpy as np
 
-def uniform_dist(dtype, params, shape):
+def uniform_dist(dtype, params, shape, type_limits):
 
     try:
         low, high = params
@@ -8,10 +8,22 @@ def uniform_dist(dtype, params, shape):
         low, high = -params, params
 
     if np.issubdtype(dtype, np.signedinteger):
+        if type_limits:
+            type_limits_info = np.iinfo(dtype)
+            low = max(low, type_limits_info.min)
+            high = min(high, type_limits_info.max)
         return np.random.randint(low, high, shape, dtype.type)
     if np.issubdtype(dtype, np.unsignedinteger):
+        if type_limits:
+            type_limits_info = np.iinfo(dtype)
+            low = max(low, type_limits_info.min)
+            high = min(high, type_limits_info.max)
         return np.random.randint(max(low, 0), high, shape, dtype.type)
     if np.issubdtype(dtype, np.floating):
+        if type_limits:
+            type_limits_info = np.finfo(dtype)
+            low = max(low, type_limits_info.min)
+            high = min(high, type_limits_info.max)
         return np.random.uniform(low, high, shape)
     raise NotImplementedError('no known uniform distribution for dtype ' + dtype)
 

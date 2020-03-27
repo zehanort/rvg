@@ -59,18 +59,18 @@ class NumPyRVG:
 
         self.dtype = dtype
 
-    def __call__(self, arg=None, shape=None, dist=None):
+    def __call__(self, arg=None, shape=None, dist=None, type_limits=True):
         if self.dtype is not None:
             if arg is None:
                 raise TypeError('missing 1 required argument describing the limit(s)')
-            return self.random(self.dtype, arg, shape, dist)
+            return self.random(self.dtype, arg, shape, dist, type_limits)
         elif self.a is not None:
             if arg is None:
                 raise TypeError('missing 1 required argument describing the dtype')
-            return self.random(arg, (self.a, self.b), shape, dist)
+            return self.random(arg, (self.a, self.b), shape, dist, type_limits)
         raise NotImplementedError('this call can not be served')
 
-    def random(self, dtype, params, shape=None, dist=None):
+    def random(self, dtype, params, shape=None, dist=None, type_limits=True):
         dist = dist or uniform_dist
         dtype = np.dtype(dtype)
 
@@ -86,7 +86,10 @@ class NumPyRVG:
                 field_shape = to_tuple(shape) + sub_shape
                 return gen(item_dtype, params, field_shape)
             elif isscalar(dtype):
-                return dtype.type(dist(dtype, params, shape))
+                try:
+                    return dtype.type(dist(dtype, params, shape, type_limits))
+                except TypeError:
+                    return dtype.type(dist(dtype, params, shape))
             else:
                 raise NotImplementedError(dtype)
 
