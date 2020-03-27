@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='rvg',
-    version='0.1.9',
+    version='0.1.10',
     description='random values generator',
     long_description=open('README.md', 'r').read(),
     long_description_content_type='text/markdown',
