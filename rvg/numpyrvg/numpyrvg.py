@@ -79,7 +79,11 @@ class NumPyRVG:
                 r = np.empty(shape or 1, dtype=dtype)
                 for field_name, field_dtype in fields(dtype):
                     field_params = maybe_dict_get(params, field_name)
-                    r[field_name] = gen(field_dtype, field_params, shape)
+                    # there may be tuples as names, e.g. ('x', 's0')
+                    try:
+                        r[field_name] = gen(field_dtype, field_params, shape)
+                    except IndexError:
+                        r[field_name[0]] = gen(field_dtype, field_params, shape)
                 return r if shape else r[0]
             elif issubarray(dtype):
                 item_dtype, sub_shape = dtype.subdtype
